@@ -57,10 +57,13 @@ export default function Calendar({ navigation }: any) {
 
   return (
     <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-xl mt-16">Bienvenue sur Easy Eat !</Text>
-      <Text className="mt-5">
+      <Text className="text-xl mt-10 text-center">
         Vos repas du prochains mois sont disponible ici:
       </Text>
+      <Text className="mt-4">
+        🥐: Matin - 🥦: Déjeuner - 🍿: Collaction - 🥗: Dîner
+      </Text>
+
       <ScrollView className="h-[85vh] mt-8">
         {calendar &&
           Array.isArray(calendar) &&
