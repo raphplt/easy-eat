@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import datas from "../../assets/data/meal.json";
 import { LunchMeals, MorningMeals, SnackMeals } from "./db";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function getDatesUntilOneMonthLater(): string[] {
   const dates: string[] = [];
@@ -19,15 +21,14 @@ function getDatesUntilOneMonthLater(): string[] {
 
 const dateArray = getDatesUntilOneMonthLater();
 
-const fillCalendar = () => {
-  const morningMeals = MorningMeals(datas);
-  const lunchMeals = LunchMeals(datas);
-  const snackMeals = SnackMeals(datas);
-  const dinnerMeals = LunchMeals(datas);
+const fillCalendar = async (filters: any) => {
+  const morningMeals = MorningMeals(datas, filters);
+  const lunchMeals = LunchMeals(datas, filters);
+  const snackMeals = SnackMeals(datas, filters);
+  const dinnerMeals = LunchMeals(datas, filters);
   const mealCalendar = [];
-
   for (const date of dateArray) {
-    const randomMeal: any = [];
+    const randomMeal = [];
     randomMeal.push(
       morningMeals[Math.floor(Math.random() * morningMeals.length)]
     );
@@ -38,7 +39,6 @@ const fillCalendar = () => {
     );
     mealCalendar.push({ date, meal: randomMeal });
   }
-
   return mealCalendar;
 };
 

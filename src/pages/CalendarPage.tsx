@@ -12,6 +12,7 @@ import {
 import datas from "../../assets/data/meal.json";
 import { fillCalendar, getDatesUntilOneMonthLater } from "../datas/user-meal";
 import DailyMeals from "../components/dailyMeals";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Calendar({ navigation }: any) {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,10 +23,8 @@ export default function Calendar({ navigation }: any) {
 
   useEffect(() => {
     createTable();
-    console.log("datas", datas.content.length);
     retrieveData((data: any) => {
       if (data.length === 0) {
-        console.log("data", datas.content.length);
         insertMultipleData(datas.content);
       }
       setContent(data);
@@ -44,15 +43,17 @@ export default function Calendar({ navigation }: any) {
   }, []);
 
   useEffect(() => {
-    const morning = MorningMeals(datas);
-    // console.log("morning", morning);
-  }, []);
-
-  useEffect(() => {
-    const datas = fillCalendar();
-    // console.log(typeof datas);
-    setCalendar(datas);
-    // console.log("calendar", datas);
+    const storeData = async () => {
+      try {
+        const filter: any = await AsyncStorage.getItem("@storage_Key");
+        console.log(filter);
+        const datas: any = fillCalendar(filter);
+        setCalendar(datas["_j"]);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    storeData();
   }, []);
 
   return (
@@ -77,7 +78,7 @@ export default function Calendar({ navigation }: any) {
 
       {/* <Text>{JSON.stringify(calendar)}</Text> */}
       <StatusBar style="auto" />
-      <Text>{datas.content.length}</Text>
+      <Text>{calendar.length} taille</Text>
     </View>
   );
 }

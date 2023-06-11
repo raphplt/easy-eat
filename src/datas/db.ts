@@ -79,27 +79,39 @@ const retrieveData = (callback: any) => {
   });
 };
 
-const MorningMeals = (datas: any) => {
+const MorningMeals = (datas: any, filters: any) => {
+  filters = JSON.parse(filters);
   const morningMeals = [];
   for (const data of datas.content) {
-    if (data.food_group === "Petit-déjeuner") {
+    if (
+      data.food_group === "Petit-déjeuner" &&
+      data.has_meat === !filters.vegetarian &&
+      parseInt(String(data.price)) <= filters.budget
+    ) {
       morningMeals.push(data);
     }
   }
   return morningMeals;
 };
 
-const LunchMeals = (datas: any) => {
+const LunchMeals = (datas: any, filters: any) => {
+  filters = JSON.parse(filters);
   const lunchMeals = [];
   for (const data of datas.content) {
-    if (data.food_group === "Plat principal") {
+    if (
+      data.food_group === "Plat principal" &&
+      data.has_meat === !filters.vegetarian &&
+      parseInt(String(data.price)) <= filters.budget
+    ) {
       lunchMeals.push(data);
     }
   }
   return lunchMeals;
 };
 
-const SnackMeals = (datas: any) => {
+const SnackMeals = (datas: any, filters: any) => {
+  filters = JSON.parse(filters);
+
   const lunchMeals = [];
   for (const data of datas.content) {
     if (data.food_group === "Collation") {
