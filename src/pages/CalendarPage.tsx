@@ -1,60 +1,65 @@
 import { StatusBar } from "expo-status-bar";
 import { Text, View, TextInput, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
-import { registerRootComponent } from "expo";
 import * as SQLite from "expo-sqlite";
-import {
-  MorningMeals,
-  createTable,
-  insertMultipleData,
-  retrieveData,
-} from "../datas/db";
+import { createTable, insertMultipleData, retrieveData } from "../datas/db";
 import datas from "../../assets/data/meal.json";
 import { fillCalendar, getDatesUntilOneMonthLater } from "../datas/user-meal";
 import DailyMeals from "../components/dailyMeals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Calendar({ navigation }: any) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [content, setContent]: any = useState({});
-  const [currentName, setCurrentName] = useState(undefined);
-  const db = SQLite.openDatabase("meal.db");
+  const [content, setContent]: any = useState([]);
   const [calendar, setCalendar] = useState<any>({});
+  // const [isLoading, setIsLoading] = useState(false);
+  // const db = SQLite.openDatabase("meal.db");
+
+  // useEffect(() => {
+  //   createTable();
+  //   retrieveData((data: any) => {
+  //     if (data.length === 0) {
+  //       insertMultipleData(datas.content);
+  //     }
+  //     setContent(data);
+  //   });
+  // }, []);
+  // if (isLoading) {
+  //   return (
+  //     <View className="flex-1 items-center justify-center bg-white">
+  //       <Text>Chargement...</Text>
+  //     </View>
+  //   );
+  // }
+
+  // useEffect(() => {
+  //   const dates = getDatesUntilOneMonthLater();
+  // }, []);
 
   useEffect(() => {
-    createTable();
-    retrieveData((data: any) => {
-      if (data.length === 0) {
-        insertMultipleData(datas.content);
-      }
-      setContent(data);
-    });
-  }, []);
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <Text>Chargement...</Text>
-      </View>
-    );
-  }
-
-  useEffect(() => {
-    const dates = getDatesUntilOneMonthLater();
-  }, []);
-
-  useEffect(() => {
-    const storeData = async () => {
+    const getData = async () => {
       try {
-        const filter: any = await AsyncStorage.getItem("@storage_Key");
-        console.log(filter);
-        const datas: any = fillCalendar(filter);
-        setCalendar(datas["_j"]);
+        const datas: any = await AsyncStorage.getItem("@mealCalendar");
+        setContent(Object.entries(JSON.parse(datas)));
       } catch (e) {
         console.log(e);
       }
     };
-    storeData();
+    getData();
   }, []);
+
+  // useEffect(() => {
+  //   const storeData = async () => {
+  //     try {
+  //       const filter: any = await AsyncStorage.getItem("@filters");
+  //       console.log("filtres:", filter);
+  //       const datas: any = fillCalendar(filter);
+  //       setCalendar(datas["_j"]);
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   };
+  //   storeData();
+  // }, []);
 
   return (
     <View className="flex-1 items-center justify-center bg-white">
@@ -62,23 +67,18 @@ export default function Calendar({ navigation }: any) {
         Vos repas du prochains mois sont disponible ici:
       </Text>
       <Text className="mt-4">
-        🥐: Matin - 🥦: Déjeuner - 🍿: Collaction - 🥗: Dîner
+        🥐: Matin - 🥦: Déjeuner - 🍿: Collation - 🥗: Dîner
       </Text>
-
       <ScrollView className="h-[85vh] mt-8">
-        {calendar &&
-          Array.isArray(calendar) &&
-          calendar.length > 0 &&
-          calendar.map((item: any, id: any) => (
+        {content &&
+          content.map((item: any, id: any) => (
             <View key={id}>
               <DailyMeals datas={item} />
             </View>
           ))}
       </ScrollView>
 
-      {/* <Text>{JSON.stringify(calendar)}</Text> */}
       <StatusBar style="auto" />
-      <Text>{calendar.length} taille</Text>
     </View>
   );
 }

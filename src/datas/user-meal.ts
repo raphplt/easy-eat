@@ -26,7 +26,7 @@ const fillCalendar = async (filters: any) => {
   const lunchMeals = LunchMeals(datas, filters);
   const snackMeals = SnackMeals(datas, filters);
   const dinnerMeals = LunchMeals(datas, filters);
-  const mealCalendar = [];
+  const mealCalendar: any = {};
   for (const date of dateArray) {
     const randomMeal = [];
     randomMeal.push(
@@ -37,9 +37,14 @@ const fillCalendar = async (filters: any) => {
     randomMeal.push(
       dinnerMeals[Math.floor(Math.random() * dinnerMeals.length)]
     );
-    mealCalendar.push({ date, meal: randomMeal });
+    mealCalendar[date] = randomMeal;
   }
-  return mealCalendar;
+  try {
+    await AsyncStorage.setItem("@mealCalendar", JSON.stringify(mealCalendar));
+  } catch (e) {
+    console.log(e);
+  }
 };
+
 
 export { getDatesUntilOneMonthLater, fillCalendar };
