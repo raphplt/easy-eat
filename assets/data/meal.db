@@ -1,0 +1,14 @@
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "meal" (
+	"id"	INTEGER NOT NULL UNIQUE,
+	"name"	TEXT NOT NULL,
+	"calories"	INTEGER NOT NULL,
+	"season"	TEXT NOT NULL,
+	"price"	TEXT NOT NULL,
+	"food_group"	TEXT NOT NULL,
+	"allergens"	TEXT NOT NULL,
+	"prep_time"	INTEGER NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+INSERT INTO "meal" VALUES (1,'pouler',200,'NONE','Cheap','Viande','NONE','Long');
+COMMIT;
